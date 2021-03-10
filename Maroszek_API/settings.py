@@ -23,7 +23,7 @@ SECRET_KEY = '22ta$8h3bhng&1hdncs07-@66^im-t!m7c++)_q%j$pe6y3hxa'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['maroszek-api.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['maroszek-api.herokuapp.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -77,17 +77,17 @@ WSGI_APPLICATION = 'Maroszek_API.wsgi.application'
 DATABASES = {
     'default': {
 
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
 
         'NAME': 'postgres',
 
         'USER': 'postgres',
 
-        'PASSWORD': 'password',
+        'PASSWORD': 'postgres',
 
-        'HOST': 'localhost',
+        'HOST': 'db',
 
-        'PORT': '5432',
+        'PORT': 5432,
 
     }
 }
