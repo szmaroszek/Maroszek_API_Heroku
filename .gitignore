@@ -21,3 +21,4 @@ venv.bak/
 .vscode
 
 /staticfiles/
+/static/

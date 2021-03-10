@@ -7,20 +7,12 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-  migration:
-    build: .
-    command: python manage.py migrate
-    volumes:
-      - .:/code
-    depends_on:
-      - db
   static:
     build: .
-    command: python manage.py collectstatic
+    command: python manage.py collectstatic --noinput
     volumes:
       - .:/code
     depends_on:
-      - migration
       - db
   web:
     build: .
@@ -31,6 +23,5 @@ services:
       - "8000:8000"
     depends_on:
       - static
-      - migration
       - db
 

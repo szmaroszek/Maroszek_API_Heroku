@@ -17,7 +17,7 @@ class CarsTests(APITestCase):
         url = reverse('car_list')
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Car.objects.count(), 5)
+        self.assertEqual(len(response.data), 5)
 
     def test_post_cars(self):
         url = reverse('car_list')
@@ -146,7 +146,7 @@ class PopularTests(APITestCase):
         self.car_2_rating_1 = Rating.objects.create(car_id=self.car_item_2, rating='5')
         self.car_2_rating_2 = Rating.objects.create(car_id=self.car_item_2, rating='5')
 
-    def test_add_rating(self):
+    def test_popular_order(self):
         url = reverse('popular')
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
