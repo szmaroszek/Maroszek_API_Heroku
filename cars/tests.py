@@ -73,11 +73,11 @@ class CarsDeleteTests(APITestCase):
         self.car_item_1 = Car.objects.create(make='BMW', model="320i")
 
     def test_delete_cars(self):
-        response = self.client.delete('/cars/1/', format='json')
+        response = self.client.delete(f'/cars/{Car.objects.get(model="320i").id}/', format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_cars_not_in_database(self):
-        response = self.client.delete('/cars/2/', format='json')
+        response = self.client.delete('/cars/20000/', format='json')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
@@ -87,49 +87,49 @@ class RatingTests(APITestCase):
         self.car_1_rating_1 = Rating.objects.create(car_id=self.car_item_1, rating='1')
 
     def test_add_rating(self):
-        data = {'car_id': '1', 'rating': '5'}
+        data = {'car_id': f'{Car.objects.get(model="320i").id}', 'rating': '5'}
         response = self.client.post('/rate/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         #check if average rating is calculated and saved properly
-        self.assertEqual(Car.objects.get(id=1).avg_rating, 3)
+        self.assertEqual(Car.objects.get(id=Car.objects.get(model="320i").id).avg_rating, 3)
     
     def test_add_rating_item_doesnt_exist(self):
-        data = {'car_id': '2', 'rating': '5'}
+        data = {'car_id': '20000', 'rating': '5'}
         response = self.client.post('/rate/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_rating_rating_too_high(self):
-        data = {'car_id': '1', 'rating': '6'}
+        data = {'car_id': f'{Car.objects.get(model="320i").id}', 'rating': '6'}
         response = self.client.post('/rate/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_rating_rating_too_low(self):
-        data = {'car_id': '1', 'rating': '0'}
+        data = {'car_id': f'{Car.objects.get(model="320i").id}', 'rating': '0'}
         response = self.client.post('/rate/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_rating_rating_not_int(self):
-        data = {'car_id': '1', 'rating': '3.5'}
+        data = {'car_id': f'{Car.objects.get(model="320i").id}', 'rating': '3.5'}
         response = self.client.post('/rate/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_rating_body_not_valid1(self):
-        data = {'NOT_VALID': '1', 'rating': '5'}
+        data = {'NOT_VALID': f'{Car.objects.get(model="320i").id}', 'rating': '5'}
         response = self.client.post('/rate/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_rating_body_not_valid2(self):
-        data = {'car_id': '1', 'NOT_VALID': '5'}
+        data = {'car_id': f'{Car.objects.get(model="320i").id}', 'NOT_VALID': '5'}
         response = self.client.post('/rate/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_rating_body_not_valid3(self):
-        data = {'NOT_VALID': '1', 'NOT_VALID': '5'}
+        data = {'NOT_VALID': f'{Car.objects.get(model="320i").id}', 'NOT_VALID': '5'}
         response = self.client.post('/rate/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_rating_too_much_arguments(self):
-        data = {'car_id': '1', 'rating': '5', 'ADDITIONAL_KEY': 'SHOULD_WORK_FINE'}
+        data = {'car_id': f'{Car.objects.get(model="320i").id}', 'rating': '5', 'ADDITIONAL_KEY': 'SHOULD_WORK_FINE'}
         response = self.client.post('/rate/', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -139,7 +139,6 @@ class PopularTests(APITestCase):
         self.car_item_1 = Car.objects.create(make='BMW', model="320i")
         # add 1 rating to car_id 1
         self.car_1_rating_1 = Rating.objects.create(car_id=self.car_item_1, rating='5')
-
 
         self.car_item_2 = Car.objects.create(make='BMW', model="325i")
         # add 2 ratings to car_id 2
@@ -151,4 +150,4 @@ class PopularTests(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         #check if items are displayed in the correct order
-        self.assertEqual(response.data[0]['id'], 2)
+        self.assertEqual(response.data[0]['model'], '325i')
