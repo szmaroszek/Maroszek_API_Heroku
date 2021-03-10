@@ -1,0 +1,1 @@
+web: gunicorn Maroszek_API.wsgi
